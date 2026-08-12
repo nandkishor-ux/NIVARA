@@ -1,13 +1,15 @@
 ---
 title: NIVARA
-emoji: 📚
-colorFrom: gray
+emoji: 🏥
+colorFrom: blue
 colorTo: green
-sdk: gradio
-sdk_version: 6.23.1
-python_version: '3.12'
-app_file: app.py
+sdk: docker
+app_port: 7860
 pinned: false
 ---
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+# NIVARA
+
+NIVARA is a connected space for hostel health, safety, and wellness support.
+
+This is the initial skeleton: a simple Flask app with a single landing page served via gunicorn and deployable to Hugging Face Spaces using the Docker SDK.
