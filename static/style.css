@@ -22,3 +22,138 @@ h1 {
     font-size: 1.1rem;
     color: #666;
 }
+
+.checkin-card {
+    max-width: 440px;
+    width: 90%;
+    background: #fff;
+    border-radius: 24px;
+    padding: 2.2rem 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.checkin-card h1 {
+    margin-bottom: 0.15em;
+}
+
+.checkin-form {
+    margin-top: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.mood-section {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mood-section legend {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #4a4a4a;
+    margin-bottom: 0.8rem;
+}
+
+.mood-selector {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.mood-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 64px;
+    background: #f4f6f8;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease,
+        box-shadow 0.12s ease;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.mood-option:hover {
+    background: #eceff3;
+    transform: translateY(-2px);
+}
+
+.mood-option:has(.mood-input:checked) {
+    background: #fff3e6;
+    border-color: #f59e0b;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+    transform: scale(1.08);
+}
+
+.mood-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.mood-emoji {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.note-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.9rem 1rem;
+    border: 1px solid #e2e6ea;
+    border-radius: 14px;
+    background: #fafbfc;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: #333;
+    resize: vertical;
+    transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.note-field textarea:focus {
+    outline: none;
+    border-color: #f59e0b;
+    background: #fff;
+}
+
+.btn-primary {
+    padding: 0.85rem 1rem;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: #fff;
+    font-family: inherit;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.12s ease, transform 0.12s ease;
+}
+
+.btn-primary:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.flash {
+    margin: 0.75rem 0 0;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+}
+
+.flash-success {
+    background: #e8f7ee;
+    color: #15803d;
+}
+
+.flash-error {
+    background: #fee2e2;
+    color: #b91c1c;
+}
