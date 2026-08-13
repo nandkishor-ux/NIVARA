@@ -46,5 +46,30 @@ def checkin():
     return render_template("checkin.html")
 
 
+@app.route("/speakup", methods=["GET", "POST"])
+def speakup():
+    if request.method == "POST":
+        category = request.form.get("category") or "other"
+        description = request.form.get("description", "").strip()
+        is_anonymous = request.form.get("is_anonymous") == "on"
+
+        if not description:
+            return render_template("speakup.html", error="Please describe what's going on."), 400
+
+        report = models.Report(
+            category=category,
+            description=description,
+            is_anonymous=is_anonymous,
+            status="open",
+        )
+        db.session.add(report)
+        db.session.commit()
+
+        flash("Your report has been submitted. Hostel staff will review it.", "success")
+        return redirect(url_for("speakup"))
+
+    return render_template("speakup.html")
+
+
 if __name__ == "__main__":
     app.run()

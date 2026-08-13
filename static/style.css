@@ -157,3 +157,60 @@ h1 {
     background: #fee2e2;
     color: #b91c1c;
 }
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    text-align: left;
+}
+
+.field-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #4a4a4a;
+}
+
+.field-control {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.85rem 1rem;
+    border: 1px solid #e2e6ea;
+    border-radius: 14px;
+    background: #fafbfc;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: #333;
+    transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+select.field-control {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, #999 50%),
+        linear-gradient(135deg, #999 50%, transparent 50%);
+    background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+}
+
+.field-control:focus {
+    outline: none;
+    border-color: #f59e0b;
+    background-color: #fff;
+}
+
+.anon-option {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.95rem;
+    color: #4a4a4a;
+    cursor: pointer;
+}
+
+.anon-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #f59e0b;
+    cursor: pointer;
+}
