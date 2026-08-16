@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}NIVARA - {{ category.title }}{% endblock %}
+
+{% block content %}
+<main class="helphub-placeholder-card">
+    <h1>{{ category.title }}</h1>
+    <p class="subtitle">Contact: [{{ category.contact }} — to be configured]</p>
+    <a href="{{ url_for('helphub') }}" class="btn-primary">Back to Help Hub</a>
+</main>
+{% endblock %}

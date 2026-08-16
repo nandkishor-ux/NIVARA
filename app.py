@@ -71,5 +71,42 @@ def speakup():
     return render_template("speakup.html")
 
 
+HELP_CATEGORIES = {
+    "medical": {"title": "Medical Help", "contact": "Hostel Medical Desk"},
+    "safety": {"title": "Safety Concern", "contact": "Hostel Safety Officer"},
+    "emergency": {"title": "Hostel Emergency", "contact": "24/7 Hostel Emergency Line"},
+    "general": {"title": "General Support", "contact": "Hostel Support Staff"},
+}
+
+
+@app.route("/helphub")
+def helphub():
+    return render_template("helphub.html")
+
+
+def _category_page(slug):
+    return render_template("helphub_category.html", category=HELP_CATEGORIES[slug])
+
+
+@app.route("/helphub/medical")
+def helphub_medical():
+    return _category_page("medical")
+
+
+@app.route("/helphub/safety")
+def helphub_safety():
+    return _category_page("safety")
+
+
+@app.route("/helphub/emergency")
+def helphub_emergency():
+    return _category_page("emergency")
+
+
+@app.route("/helphub/general")
+def helphub_general():
+    return _category_page("general")
+
+
 if __name__ == "__main__":
     app.run()

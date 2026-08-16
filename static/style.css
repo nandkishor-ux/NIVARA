@@ -214,3 +214,90 @@ select.field-control {
     accent-color: #f59e0b;
     cursor: pointer;
 }
+
+.helphub {
+    width: 90%;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.help-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+    margin-top: 1.5rem;
+}
+
+.help-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 1.6rem 1.4rem;
+    min-height: 120px;
+    border-radius: 20px;
+    text-decoration: none;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+.help-tile:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.2);
+    opacity: 0.94;
+}
+
+.help-tile:active {
+    transform: scale(0.97);
+}
+
+.help-tile-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.help-tile-hint {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.help-tile-medical {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.help-tile-safety {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.help-tile-emergency {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.help-tile-general {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+@media (max-width: 480px) {
+    .help-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.helphub-placeholder-card {
+    max-width: 440px;
+    width: 90%;
+    background: #fff;
+    border-radius: 24px;
+    padding: 2.2rem 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+}

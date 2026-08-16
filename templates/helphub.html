@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}NIVARA - Help Hub{% endblock %}
+
+{% block content %}
+<main class="helphub">
+    <h1>Help Hub</h1>
+    <p class="subtitle">Get help fast — one tap, that's it.</p>
+    <nav class="help-grid">
+        <a href="{{ url_for('helphub_medical') }}" class="help-tile help-tile-medical">
+            <span class="help-tile-title">Medical Help</span>
+            <span class="help-tile-hint">Sick or injured</span>
+        </a>
+        <a href="{{ url_for('helphub_safety') }}" class="help-tile help-tile-safety">
+            <span class="help-tile-title">Safety Concern</span>
+            <span class="help-tile-hint">Report a hazard</span>
+        </a>
+        <a href="{{ url_for('helphub_emergency') }}" class="help-tile help-tile-emergency">
+            <span class="help-tile-title">Hostel Emergency</span>
+            <span class="help-tile-hint">Urgent help now</span>
+        </a>
+        <a href="{{ url_for('helphub_general') }}" class="help-tile help-tile-general">
+            <span class="help-tile-title">General Support</span>
+            <span class="help-tile-hint">Anything else</span>
+        </a>
+    </nav>
+</main>
+{% endblock %}
