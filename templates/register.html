@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}NIVARA - Register{% endblock %}
+
+{% block content %}
+<main class="auth-card">
+    <h1>Join NIVARA</h1>
+    <p class="subtitle">Set up your student account to check in, talk to Buddy, and get help</p>
+
+    {% if error %}
+        <p class="flash flash-error">{{ error }}</p>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <p class="flash flash-{{ category }}">{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    <form method="post" class="checkin-form">
+        <label class="field">
+            <span class="field-label">Name</span>
+            <input type="text" name="name" class="field-control" placeholder="Your name" required value="{{ name or '' }}">
+        </label>
+
+        <label class="field">
+            <span class="field-label">Email</span>
+            <input type="email" name="email" class="field-control" placeholder="you@example.com" required value="{{ email or '' }}">
+        </label>
+
+        <label class="field">
+            <span class="field-label">Phone Number</span>
+            <input type="tel" name="phone_number" class="field-control" placeholder="+91 98765 43210" required value="{{ phone_number or '' }}">
+        </label>
+
+        <label class="field">
+            <span class="field-label">Hostel Name</span>
+            <input type="text" name="hostel_name" class="field-control" placeholder="e.g. A Block, Girls' Hostel" required value="{{ hostel_name or '' }}">
+        </label>
+
+        <button type="submit" class="btn-primary">Send OTP</button>
+    </form>
+</main>
+{% endblock %}

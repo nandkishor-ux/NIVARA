@@ -12,6 +12,12 @@ class Student(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     display_name = db.Column(db.String, nullable=True)
+    email = db.Column(db.String, unique=True, nullable=False)
+    phone_number = db.Column(db.String, nullable=False)
+    hostel_name = db.Column(db.String, nullable=False)
+    is_verified = db.Column(db.Boolean, default=False)
+    otp_code = db.Column(db.String, nullable=True)
+    otp_created_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=utcnow)
 
     check_ins = db.relationship("CheckIn", backref="student")

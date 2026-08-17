@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}NIVARA - Verify OTP{% endblock %}
+
+{% block content %}
+<main class="auth-card">
+    <h1>Verify your email</h1>
+    <p class="subtitle">We sent a 6-digit code to <strong>{{ email }}</strong></p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p class="flash flash-{{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if error %}
+        <p class="flash flash-error">{{ error }}</p>
+    {% endif %}
+
+    <form method="post" class="checkin-form">
+        <input type="hidden" name="email" value="{{ email }}">
+
+        <label class="field">
+            <span class="field-label">Verification Code</span>
+            <input type="text" name="code" class="field-control otp-input"
+                   placeholder="000000" inputmode="numeric" pattern="[0-9]{6}"
+                   maxlength="6" required autocomplete="one-time-code">
+        </label>
+
+        <button type="submit" class="btn-primary">Verify</button>
+    </form>
+
+    <form method="post" action="{{ url_for('resend_otp') }}" class="resend-form">
+        <input type="hidden" name="email" value="{{ email }}">
+        <button type="submit" class="resend-button">Resend OTP</button>
+    </form>
+</main>
+{% endblock %}

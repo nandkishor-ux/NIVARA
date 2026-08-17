@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}NIVARA - Log In{% endblock %}
+
+{% block content %}
+<main class="auth-card">
+    <h1>Welcome back to NIVARA</h1>
+    <p class="subtitle">Enter your registered email to receive a one-time login code</p>
+
+    {% if error %}
+        <p class="flash flash-error">{{ error }}</p>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <p class="flash flash-{{ category }}">{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    <form method="post" class="checkin-form">
+        <label class="field">
+            <span class="field-label">Email</span>
+            <input type="email" name="email" class="field-control" placeholder="you@example.com" required value="{{ email or '' }}">
+        </label>
+
+        <button type="submit" class="btn-primary">Send Login Code</button>
+    </form>
+
+    <p class="auth-switch">New to NIVARA? <a href="{{ url_for('register') }}">Create an account</a></p>
+</main>
+{% endblock %}

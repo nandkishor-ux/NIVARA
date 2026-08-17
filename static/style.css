@@ -32,6 +32,83 @@ h1 {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
 }
 
+.auth-card {
+    max-width: 440px;
+    width: 90%;
+    background: #fff;
+    border-radius: 24px;
+    padding: 2.2rem 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.auth-card .checkin-form {
+    width: 100%;
+}
+
+.otp-input {
+    text-align: center;
+    font-size: 1.4rem;
+    letter-spacing: 0.4em;
+}
+
+.resend-form {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.resend-button {
+    border: none;
+    background: none;
+    color: #f59e0b;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0.4rem 0.6rem;
+    border-radius: 8px;
+}
+
+.resend-button:hover {
+    background: #fff8ec;
+}
+
+.logout-link {
+    position: fixed;
+    top: 0.8rem;
+    right: 1rem;
+    font-size: 0.85rem;
+    color: #64748b;
+    text-decoration: none;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+}
+
+.logout-link:hover {
+    color: #b91c1c;
+    border-color: #fecaca;
+    background: #fef2f2;
+}
+
+.auth-switch {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.auth-switch a {
+    color: #f59e0b;
+    font-weight: 600;
+    text-decoration: none;
+}
+
 .checkin-card h1 {
     margin-bottom: 0.15em;
 }
