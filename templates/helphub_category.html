@@ -6,6 +6,24 @@
 <main class="helphub-placeholder-card">
     <h1>{{ category.title }}</h1>
     <p class="subtitle">Contact: [{{ category.contact }} — to be configured]</p>
+
+    {% if category.numbers %}
+    <section class="call-section">
+        <h2 class="call-section-title">Call a helpline now</h2>
+        <div class="call-list">
+            {% for number in category.numbers %}
+            <a class="call-button" href="tel:{{ number.value }}">
+                <span class="call-button-icon">📞</span>
+                <span class="call-button-text">
+                    <span class="call-button-label">Call {{ number.label }}</span>
+                    <span class="call-button-number">{{ number.value }}</span>
+                </span>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
     <a href="{{ url_for('helphub') }}" class="btn-primary">Back to Help Hub</a>
 </main>
 {% endblock %}

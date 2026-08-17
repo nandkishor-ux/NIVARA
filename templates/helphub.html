@@ -58,7 +58,11 @@
                             <span class="contact-relationship">{{ contact.relationship }}</span>
                         {% endif %}
                         <a class="contact-phone" href="tel:{{ contact.phone_number }}">
-                            📞 {{ contact.phone_number }}
+                            <span class="contact-phone-icon">📞</span>
+                            <span class="contact-phone-text">
+                                <span class="contact-phone-label">Call {{ contact.name }}</span>
+                                <span class="contact-phone-number">{{ contact.phone_number }}</span>
+                            </span>
                         </a>
                     </div>
                     <form method="post" action="{{ url_for('helphub_contact_delete', contact_id=contact.id) }}">

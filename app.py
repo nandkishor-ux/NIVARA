@@ -104,10 +104,37 @@ def speakup():
 
 
 HELP_CATEGORIES = {
-    "medical": {"title": "Medical Help", "contact": "Hostel Medical Desk"},
-    "safety": {"title": "Safety Concern", "contact": "Hostel Safety Officer"},
-    "emergency": {"title": "Hostel Emergency", "contact": "24/7 Hostel Emergency Line"},
-    "general": {"title": "General Support", "contact": "Hostel Support Staff"},
+    "medical": {
+        "title": "Medical Help",
+        "contact": "Hostel Medical Desk",
+        "numbers": [
+            {"label": "Ambulance", "value": "102"},
+            {"label": "Emergency Ambulance", "value": "108"},
+        ],
+    },
+    "safety": {
+        "title": "Safety Concern",
+        "contact": "Hostel Safety Officer",
+        "numbers": [
+            {"label": "Women Helpline", "value": "1091"},
+            {"label": "Police", "value": "100"},
+        ],
+    },
+    "emergency": {
+        "title": "Hostel Emergency",
+        "contact": "24/7 Hostel Emergency Line",
+        "numbers": [
+            {"label": "National Emergency", "value": "112"},
+            {"label": "Emergency Ambulance", "value": "108"},
+        ],
+    },
+    "general": {
+        "title": "General Support",
+        "contact": "Hostel Support Staff",
+        "numbers": [
+            {"label": "National Emergency", "value": "112"},
+        ],
+    },
 }
 
 
