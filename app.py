@@ -1,5 +1,6 @@
 import logging
 import traceback
+from datetime import datetime, timedelta, timezone
 
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -20,14 +21,36 @@ with app.app_context():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", streak=current_streak())
+
+
+def current_streak():
+    today = datetime.now(timezone.utc).date()
+    rows = models.CheckIn.query.with_entities(models.CheckIn.created_at).all()
+    checked_days = {r[0].date() for r in rows}
+
+    streak = 0
+    day = today
+    if day not in checked_days:
+        day = day - timedelta(days=1)
+    while day in checked_days:
+        streak += 1
+        day = day - timedelta(days=1)
+    return streak
 
 
 @app.route("/checkin", methods=["GET", "POST"])
 def checkin():
     if request.method == "POST":
-        mood_level = request.form.get("mood_level")
-        mood_note = request.form.get("mood_note", "").strip() or None
+        is_json = request.is_json
+
+        if is_json:
+            data = request.get_json(silent=True) or {}
+            mood_level = data.get("mood_level")
+            mood_note = data.get("mood_note", "").strip() or None
+        else:
+            mood_level = request.form.get("mood_level")
+            mood_note = request.form.get("mood_note", "").strip() or None
 
         error = None
         try:
@@ -38,11 +61,16 @@ def checkin():
             error = "Please select a mood to check in."
 
         if error:
+            if is_json:
+                return jsonify({"error": error}), 400
             return render_template("checkin.html", error=error, mood_note=mood_note), 400
 
         checkin = models.CheckIn(mood_level=mood_level, mood_note=mood_note)
         db.session.add(checkin)
         db.session.commit()
+
+        if is_json:
+            return jsonify({"ok": True, "streak": current_streak()})
 
         flash("Thanks for checking in today!", "success")
         return redirect(url_for("checkin"))

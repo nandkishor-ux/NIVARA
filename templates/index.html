@@ -1,6 +1,93 @@
 {% extends "base.html" %}
 
+{% block title %}NIVARA - Hostel Health, Safety &amp; Wellness{% endblock %}
+
 {% block content %}
+<main class="home">
     <h1>NIVARA - Hostel Health, Safety &amp; Wellness</h1>
     <p class="subtitle">Your connected space for support</p>
+
+    {% if streak > 0 %}
+        <p class="streak">🔥 {{ streak }}-day check-in streak</p>
+    {% else %}
+        <p class="streak">Start your check-in streak today</p>
+    {% endif %}
+
+    <nav class="quick-grid">
+        <a href="{{ url_for('checkin') }}" class="quick-card quick-card-checkin">
+            <span class="quick-emoji">🌤️</span>
+            <span class="quick-title">Daily Check-In</span>
+            <span class="quick-desc">A 5-second mood check-in</span>
+        </a>
+        <a href="{{ url_for('speakup') }}" class="quick-card quick-card-speakup">
+            <span class="quick-emoji">📣</span>
+            <span class="quick-title">Speak Up</span>
+            <span class="quick-desc">Share a concern, stay anonymous</span>
+        </a>
+        <a href="{{ url_for('helphub') }}" class="quick-card quick-card-helphub">
+            <span class="quick-emoji">🛟</span>
+            <span class="quick-title">Help Hub</span>
+            <span class="quick-desc">One tap to the right support</span>
+        </a>
+        <a href="{{ url_for('buddy') }}" class="quick-card quick-card-buddy">
+            <span class="quick-emoji">💬</span>
+            <span class="quick-title">Talk to Nivara Buddy</span>
+            <span class="quick-desc">A safe space to talk, anytime</span>
+        </a>
+    </nav>
+
+    <section class="mood-row">
+        <p class="mood-row-prompt">How are you feeling right now?</p>
+        <div class="mood-row-options">
+            {% for value, emoji in [(1, '😞'), (2, '😐'), (3, '🙂'), (4, '😊'), (5, '🤩')] %}
+            <button type="button" class="mood-row-option" data-mood="{{ value }}" aria-label="Log mood {{ emoji }}">{{ emoji }}</button>
+            {% endfor %}
+        </div>
+        <p id="mood-confirm" class="mood-confirm" hidden>Logged! ✓</p>
+    </section>
+</main>
+
+<a href="{{ url_for('buddy') }}" class="chat-fab" aria-label="Talk to Nivara Buddy" title="Talk to Nivara Buddy">
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 1 1 16.1-3.8z"></path>
+    </svg>
+</a>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const confirmEl = document.getElementById("mood-confirm");
+    const streakEl = document.querySelector(".streak");
+
+    async function logMood(value) {
+        try {
+            const res = await fetch("{{ url_for('checkin') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ mood_level: value }),
+            });
+            const data = await res.json();
+            if (!res.ok || !data.ok) return;
+
+            if (streakEl && typeof data.streak === "number") {
+                streakEl.textContent = data.streak > 0
+                    ? "🔥 " + data.streak + "-day check-in streak"
+                    : "Start your check-in streak today";
+            }
+
+            confirmEl.hidden = false;
+            confirmEl.classList.remove("fade-out");
+            void confirmEl.offsetWidth;
+            confirmEl.classList.add("fade-out");
+            setTimeout(() => { confirmEl.hidden = true; }, 2000);
+        } catch (err) {
+            // quiet fail: quick-log should never disrupt the page
+        }
+    }
+
+    document.querySelectorAll(".mood-row-option").forEach((btn) => {
+        btn.addEventListener("click", () => logMood(btn.dataset.mood));
+    });
+</script>
 {% endblock %}

@@ -9,7 +9,7 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("nivara.chatbot")
 
-MODEL_ID = "meta-llama/Llama-3.2-3B-Instruct"
+MODEL_ID = "meta-llama/Llama-3.3-70B-Instruct"
 API_TOKEN = os.getenv("HF_API_TOKEN")
 
 SYSTEM_PROMPT = """You are "Nivara Buddy," a supportive AI companion inside the NIVARA hostel wellness platform.
