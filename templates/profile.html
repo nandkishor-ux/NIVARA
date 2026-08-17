@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}NIVARA - My Profile{% endblock %}
+
+{% block content %}
+<main class="profile-card">
+    <div class="profile-avatar" aria-hidden="true">
+        {{ (student.display_name or 'N')[:1] | upper }}
+    </div>
+    <h1>{{ student.display_name }}</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p class="flash flash-{{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <dl class="profile-details">
+        <div class="profile-row">
+            <dt>Email</dt>
+            <dd>{{ student.email }}</dd>
+        </div>
+        <div class="profile-row">
+            <dt>Phone</dt>
+            <dd>{{ student.phone_number }}</dd>
+        </div>
+        <div class="profile-row">
+            <dt>Hostel</dt>
+            <dd>{{ student.hostel_name }}</dd>
+        </div>
+        <div class="profile-row">
+            <dt>Member since</dt>
+            <dd>{{ student.created_at.strftime('%B %d, %Y') }}</dd>
+        </div>
+    </dl>
+
+    <section class="profile-summary">
+        <h2>Your activity</h2>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <span class="stat-value">{{ streak }}</span>
+                <span class="stat-label">Check-in streak</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">{{ total_check_ins }}</span>
+                <span class="stat-label">Total check-ins</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">{{ contacts | length }}</span>
+                <span class="stat-label">Saved contacts</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">{{ reports_count }}</span>
+                <span class="stat-label">Reports shared</span>
+            </div>
+        </div>
+
+        <h3>Mood trend · last 30 days</h3>
+        {% if mood_checkin_count >= 3 %}
+            {% set pad_left = 30 %}
+            {% set pad_bottom = 24 %}
+            {% set chart_w = 520 %}
+            {% set plot_h = 150 %}
+            {% set chart_h = plot_h + pad_bottom %}
+            {% set n = mood_history | length %}
+            {% set slot = (chart_w - pad_left) / n %}
+            {% set y_base = pad_bottom + plot_h %}
+            {% set bar_max_w = 34 %}
+            {% set bar_w = [bar_max_w, slot * 0.55] | min %}
+            <svg class="mood-chart" viewBox="0 0 {{ chart_w }} {{ chart_h }}" role="img" aria-label="Your mood over the last 30 days">
+                <defs>
+                    <linearGradient id="moodBar" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#fbbb5c"/>
+                        <stop offset="100%" stop-color="#f59e0b"/>
+                    </linearGradient>
+                </defs>
+                {% for level in [5, 4, 3, 2, 1] %}
+                    <line x1="{{ pad_left }}" y1="{{ y_base - (plot_h / 5) * level }}" x2="{{ chart_w - 8 }}" y2="{{ y_base - (plot_h / 5) * level }}"
+                          stroke="#f1f5f9" stroke-width="1"/>
+                    <text x="{{ pad_left - 6 }}" y="{{ y_base - (plot_h / 5) * level + 3 }}" class="mood-chart-label">{{ level }}</text>
+                {% endfor %}
+                {% for item in mood_history %}
+                    {% set x = pad_left + loop.index0 * slot + (slot - bar_w) / 2 %}
+                    {% set h = (plot_h / 5) * (item.mood | float) %}
+                    {% set y = y_base - h %}
+                    {% set rx = [4, bar_w / 2] | min %}
+                    <rect x="{{ x }}" y="{{ y }}" width="{{ bar_w }}" height="{{ h }}" rx="{{ rx }}" fill="url(#moodBar)"/>
+                    {% if n <= 10 %}
+                        <text x="{{ x + bar_w / 2 }}" y="{{ y_base + 14 }}" class="mood-chart-day" text-anchor="middle">{{ item.label }}</text>
+                    {% endif %}
+                {% endfor %}
+            </svg>
+        {% else %}
+            <p class="summary-empty">Check in a few more times to see your mood trend here.</p>
+        {% endif %}
+
+        <h3>Saved emergency contacts</h3>
+        {% if contacts %}
+            <ul class="contact-list">
+                {% for contact in contacts %}
+                <li class="contact-item">
+                    <div>
+                        <span class="contact-name">{{ contact.name }}</span>
+                        <span class="contact-meta">{{ contact.phone_number }}</span>
+                    </div>
+                    <a class="contact-delete" href="{{ url_for('helphub') }}">Manage</a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="summary-empty">No emergency contacts saved yet. Add some in <a href="{{ url_for('helphub') }}">Help Hub</a>.</p>
+        {% endif %}
+    </section>
+
+    <section class="profile-trust">
+        <h2>What we store about you</h2>
+        <p class="trust-text">
+            We store your name, email address, phone number, hostel, your mood check-ins, and any
+            reports you submit without anonymity. Anonymous reports are never linked back to you —
+            even in our own records.
+        </p>
+        <a href="{{ url_for('profile_export') }}" class="btn-primary btn-edit btn-export">Download my data</a>
+    </section>
+
+    <div class="profile-actions">
+        <a href="{{ url_for('profile_edit') }}" class="btn-primary btn-edit">Edit Profile</a>
+        <form method="post" action="{{ url_for('logout') }}">
+            <button type="submit" class="btn-primary btn-danger">Log out</button>
+        </form>
+    </div>
+
+    <form method="post" action="{{ url_for('profile_delete') }}" class="profile-delete-form" id="delete-form">
+        <button type="submit" class="profile-delete-btn">Delete my account</button>
+    </form>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById("delete-form").addEventListener("submit", function (e) {
+        if (!confirm("Are you sure? This permanently deletes your account and all of your data. This can't be undone.")) {
+            e.preventDefault();
+        }
+    });
+</script>
+{% endblock %}

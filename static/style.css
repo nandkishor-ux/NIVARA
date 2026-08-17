@@ -97,6 +97,328 @@ h1 {
     background: #fef2f2;
 }
 
+.user-avatar {
+    position: fixed;
+    top: 0.8rem;
+    left: 1rem;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+    text-decoration: none;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.user-avatar:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);
+}
+
+.user-avatar-initial {
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.profile-card {
+    max-width: 460px;
+    width: 90%;
+    background: #fff;
+    border-radius: 24px;
+    padding: 2.2rem 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    margin: auto;
+}
+
+.profile-card h1 {
+    margin: 0.2rem 0 0.2rem;
+    text-align: center;
+}
+
+.profile-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+.profile-details {
+    width: 100%;
+    margin: 0.5rem 0 0.5rem;
+    padding: 0;
+}
+
+.profile-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.profile-row:last-child {
+    border-bottom: none;
+}
+
+.profile-row dt {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.profile-row dd {
+    margin: 0;
+    color: #334155;
+    font-size: 0.95rem;
+    text-align: right;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.btn-danger:hover {
+    opacity: 0.92;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 0.7rem;
+    width: 100%;
+    margin-top: 0.4rem;
+}
+
+.profile-actions .btn-edit {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+}
+
+.profile-actions form {
+    flex: 1;
+}
+
+.profile-actions form .btn-danger {
+    width: 100%;
+}
+
+.locked-fields {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.locked-fields .field-control {
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: not-allowed;
+}
+
+.profile-trust {
+    width: 100%;
+    margin-top: 0.4rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.profile-trust h2 {
+    font-size: 1.1rem;
+    margin: 0;
+    color: #1e293b;
+    align-self: flex-start;
+}
+
+.trust-text {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: #64748b;
+    margin: 0;
+    text-align: left;
+}
+
+.btn-export {
+    width: 100%;
+    background: linear-gradient(135deg, #a3e635, #84cc16);
+}
+
+.profile-delete-form {
+    width: 100%;
+    margin: 0.4rem 0 0;
+}
+
+.profile-delete-btn {
+    width: 100%;
+    border: none;
+    background: none;
+    color: #b45309;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 10px;
+    transition: background 0.12s ease;
+}
+
+.profile-delete-btn:hover {
+    background: #fdf6ee;
+}
+
+.profile-summary {
+    width: 100%;
+    margin-top: 0.4rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.mood-chart {
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    margin: 0.25rem 0 0.5rem;
+}
+
+.mood-chart-label {
+    font-size: 11px;
+    fill: #94a3b8;
+    text-anchor: end;
+}
+
+.mood-chart-day {
+    font-size: 11px;
+    fill: #94a3b8;
+}
+
+.profile-summary h2 {
+    font-size: 1.1rem;
+    margin: 0 0 0.8rem;
+    color: #1e293b;
+}
+
+.profile-summary h3 {
+    font-size: 0.95rem;
+    margin: 1.2rem 0 0.6rem;
+    color: #334155;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.7rem;
+    width: 100%;
+}
+
+.stat-card {
+    background: #fffaf0;
+    border: 1px solid #fde68a;
+    border-radius: 16px;
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #f59e0b;
+    line-height: 1.1;
+}
+
+.stat-label {
+    font-size: 0.78rem;
+    color: #64748b;
+    text-align: center;
+}
+
+.contact-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.contact-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.9rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+}
+
+.contact-item > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.contact-name {
+    font-weight: 600;
+    color: #334155;
+}
+
+.contact-meta {
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.contact-delete {
+    font-size: 0.8rem;
+    color: #f59e0b;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.contact-delete:hover {
+    text-decoration: underline;
+}
+
+.summary-empty {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.summary-empty a {
+    color: #f59e0b;
+    font-weight: 600;
+    text-decoration: none;
+}
+
 .auth-switch {
     font-size: 0.9rem;
     color: #64748b;

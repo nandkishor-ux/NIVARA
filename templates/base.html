@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    {% if current_student %}
+        <a href="{{ url_for('profile') }}" class="user-avatar" title="My profile">
+            <span class="user-avatar-initial">{{ (current_student.display_name or 'N')[:1] | upper }}</span>
+        </a>
+    {% endif %}
     {% block content %}{% endblock %}
     {% block scripts %}{% endblock %}
 </body>

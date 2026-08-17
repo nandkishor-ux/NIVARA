@@ -38,6 +38,7 @@ class Report(db.Model):
     __tablename__ = "reports"
 
     id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=True)
     category = db.Column(db.String, nullable=False)
     description = db.Column(db.Text, nullable=False)
     is_anonymous = db.Column(db.Boolean, default=True)

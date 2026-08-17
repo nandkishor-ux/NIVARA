@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}NIVARA - Edit Profile{% endblock %}
+
+{% block content %}
+<main class="auth-card">
+    <h1>Edit Profile</h1>
+    <p class="subtitle">Update your contact details</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p class="flash flash-{{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if error %}
+        <p class="flash flash-error">{{ error }}</p>
+    {% endif %}
+
+    <div class="locked-fields">
+        <label class="field">
+            <span class="field-label">Name</span>
+            <input type="text" class="field-control" value="{{ student.display_name or '' }}" readonly disabled>
+        </label>
+        <label class="field">
+            <span class="field-label">Email</span>
+            <input type="email" class="field-control" value="{{ student.email }}" readonly disabled>
+        </label>
+    </div>
+
+    <form method="post" class="checkin-form">
+        <label class="field">
+            <span class="field-label">Phone Number</span>
+            <input type="tel" name="phone_number" class="field-control" placeholder="+91 98765 43210" required value="{{ phone_number or '' }}">
+        </label>
+
+        <label class="field">
+            <span class="field-label">Hostel Name</span>
+            <input type="text" name="hostel_name" class="field-control" placeholder="e.g. A Block, Girls' Hostel" required value="{{ hostel_name or '' }}">
+        </label>
+
+        <button type="submit" class="btn-primary">Save Changes</button>
+    </form>
+
+    <p class="auth-switch"><a href="{{ url_for('profile') }}">Back to profile</a></p>
+</main>
+{% endblock %}

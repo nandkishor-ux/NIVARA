@@ -17,6 +17,7 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///nivara.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = "nivara-dev"
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=30)
 
 app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER", "smtp.gmail.com")
 app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT", "587"))
@@ -46,10 +47,199 @@ def login_required(view):
     return wrapped
 
 
+@app.context_processor
+def inject_student():
+    student_id = session.get("student_id")
+    student = None
+    if student_id is not None:
+        student = db.session.get(models.Student, student_id)
+    return {"current_student": student}
+
+
+@app.route("/profile")
+@login_required
+def profile():
+    student = db.session.get(models.Student, session["student_id"])
+    if student is None:
+        session.clear()
+        return redirect(url_for("login"))
+
+    cutoff = datetime.now(timezone.utc) - timedelta(days=30)
+    history = models.CheckIn.query.filter(
+        models.CheckIn.student_id == student.id,
+        models.CheckIn.created_at >= cutoff,
+    ).order_by(models.CheckIn.created_at).all()
+
+    daily = {}
+    for ci in history:
+        day = ci.created_at.date()
+        values = daily.setdefault(day, [])
+        values.append(ci.mood_level)
+
+    mood_history = [
+        {"date": day.isoformat(), "label": day.strftime("%b %d"), "mood": round(sum(v) / len(v), 1)}
+        for day, v in sorted(daily.items())
+    ]
+
+    return render_template(
+        "profile.html",
+        student=student,
+        streak=current_streak(student.id),
+        total_check_ins=models.CheckIn.query.filter_by(student_id=student.id).count(),
+        contacts=models.EmergencyContact.query.filter_by(student_id=student.id)
+        .order_by(models.EmergencyContact.created_at)
+        .all(),
+        reports_count=models.Report.query.filter_by(
+            student_id=student.id, is_anonymous=False
+        ).count(),
+        mood_history=mood_history,
+        mood_checkin_count=len(history),
+    )
+
+
+@app.route("/profile/export")
+@login_required
+def profile_export():
+    student = db.session.get(models.Student, session["student_id"])
+    if student is None:
+        session.clear()
+        return redirect(url_for("login"))
+
+    check_ins = [
+        {
+            "mood_level": ci.mood_level,
+            "mood_note": ci.mood_note,
+            "created_at": ci.created_at.isoformat() if ci.created_at else None,
+        }
+        for ci in models.CheckIn.query.filter_by(student_id=student.id)
+        .order_by(models.CheckIn.created_at)
+        .all()
+    ]
+    reports = [
+        {
+            "category": r.category,
+            "description": r.description,
+            "is_anonymous": r.is_anonymous,
+            "status": r.status,
+            "created_at": r.created_at.isoformat() if r.created_at else None,
+        }
+        for r in models.Report.query.filter_by(
+            student_id=student.id, is_anonymous=False
+        )
+        .order_by(models.Report.created_at)
+        .all()
+    ]
+    contacts = [
+        {
+            "name": c.name,
+            "phone_number": c.phone_number,
+            "relationship": c.relationship,
+            "category": c.category,
+            "created_at": c.created_at.isoformat() if c.created_at else None,
+        }
+        for c in models.EmergencyContact.query.filter_by(student_id=student.id)
+        .order_by(models.EmergencyContact.created_at)
+        .all()
+    ]
+
+    payload = {
+        "exported_at": datetime.now(timezone.utc).isoformat(),
+        "profile": {
+            "name": student.display_name,
+            "email": student.email,
+            "phone_number": student.phone_number,
+            "hostel_name": student.hostel_name,
+            "member_since": student.created_at.isoformat() if student.created_at else None,
+        },
+        "check_ins": check_ins,
+        "non_anonymous_reports": reports,
+        "emergency_contacts": contacts,
+    }
+
+    filename = f"nivara-{student.email.split('@')[0]}-data.json"
+    response = jsonify(payload)
+    response.headers["Content-Disposition"] = f"attachment; filename={filename}"
+    return response
+
+
+@app.route("/profile/delete", methods=["POST"])
+@login_required
+def profile_delete():
+    student = db.session.get(models.Student, session["student_id"])
+    if student is None:
+        session.clear()
+        return redirect(url_for("login"))
+
+    session_ids = [
+        cs.id for cs in models.ChatSession.query.filter_by(student_id=student.id).all()
+    ]
+    if session_ids:
+        models.ChatMessage.query.filter(
+            models.ChatMessage.chat_session_id.in_(session_ids)
+        ).delete(synchronize_session=False)
+    models.ChatSession.query.filter_by(student_id=student.id).delete(
+        synchronize_session=False
+    )
+    models.CheckIn.query.filter_by(student_id=student.id).delete(synchronize_session=False)
+    models.EmergencyContact.query.filter_by(student_id=student.id).delete(
+        synchronize_session=False
+    )
+    models.Report.query.filter_by(student_id=student.id, is_anonymous=False).delete(
+        synchronize_session=False
+    )
+    db.session.delete(student)
+    db.session.commit()
+
+    session.clear()
+    flash("Your account has been deleted.", "success")
+    return redirect(url_for("login"))
+
+
+@app.route("/profile/edit", methods=["GET", "POST"])
+@login_required
+def profile_edit():
+    student = db.session.get(models.Student, session["student_id"])
+    if student is None:
+        session.clear()
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        phone_number = request.form.get("phone_number", "").strip()
+        hostel_name = request.form.get("hostel_name", "").strip()
+
+        error = None
+        if not phone_number:
+            error = "Please enter your phone number."
+        elif not hostel_name:
+            error = "Please enter your hostel name."
+
+        if error:
+            return render_template(
+                "profile_edit.html",
+                student=student,
+                error=error,
+                phone_number=phone_number,
+                hostel_name=hostel_name,
+            ), 400
+
+        student.phone_number = phone_number
+        student.hostel_name = hostel_name
+        db.session.commit()
+        flash("Profile updated.", "success")
+        return redirect(url_for("profile"))
+
+    return render_template(
+        "profile_edit.html",
+        student=student,
+        phone_number=student.phone_number,
+        hostel_name=student.hostel_name,
+    )
+
+
 @app.route("/")
 @login_required
 def index():
-    return render_template("index.html", streak=current_streak())
+    return render_template("index.html", streak=current_streak(session["student_id"]))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -83,16 +273,18 @@ def login():
     return render_template("login.html")
 
 
-@app.route("/logout")
+@app.route("/logout", methods=["GET", "POST"])
 def logout():
     session.clear()
     flash("You've been logged out.", "success")
     return redirect(url_for("login"))
 
 
-def current_streak():
+def current_streak(student_id):
     today = datetime.now(timezone.utc).date()
-    rows = models.CheckIn.query.with_entities(models.CheckIn.created_at).all()
+    rows = models.CheckIn.query.filter_by(student_id=student_id).with_entities(
+        models.CheckIn.created_at
+    ).all()
     checked_days = {r[0].date() for r in rows}
 
     streak = 0
@@ -110,6 +302,17 @@ def generate_otp():
 
 
 OTP_LIFETIME_MINUTES = 10
+OTP_RESEND_COOLDOWN_SECONDS = 60
+
+
+def otp_recently_sent(student):
+    if student is None or student.otp_created_at is None:
+        return False
+    otp_created_at = student.otp_created_at
+    if otp_created_at.tzinfo is not None:
+        otp_created_at = otp_created_at.replace(tzinfo=None)
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    return (now - otp_created_at).total_seconds() < OTP_RESEND_COOLDOWN_SECONDS
 
 
 def send_otp_email(student, otp):
@@ -156,7 +359,9 @@ def register():
             error = "Please enter your hostel name."
         else:
             existing = models.Student.query.filter_by(email=email).first()
-            if existing:
+            if existing and otp_recently_sent(existing):
+                error = "Please wait a moment before requesting another code"
+            elif existing:
                 error = "This email is already registered."
 
         if error:
@@ -237,6 +442,7 @@ def verify_otp():
         db.session.commit()
 
         session["student_id"] = student.id
+        session.permanent = True
         flash("Welcome to NIVARA! Your account is verified.", "success")
         return redirect(url_for("index"))
 
@@ -251,6 +457,10 @@ def resend_otp():
     if not student:
         flash("No account found for that email.", "error")
         return redirect(url_for("register"))
+
+    if otp_recently_sent(student):
+        flash("Please wait a moment before requesting another code", "error")
+        return redirect(url_for("verify_otp", email=email))
 
     otp = generate_otp()
     student.otp_code = otp
@@ -292,12 +502,14 @@ def checkin():
                 return jsonify({"error": error}), 400
             return render_template("checkin.html", error=error, mood_note=mood_note), 400
 
-        checkin = models.CheckIn(mood_level=mood_level, mood_note=mood_note)
+        checkin = models.CheckIn(
+            mood_level=mood_level, mood_note=mood_note, student_id=session["student_id"]
+        )
         db.session.add(checkin)
         db.session.commit()
 
         if is_json:
-            return jsonify({"ok": True, "streak": current_streak()})
+            return jsonify({"ok": True, "streak": current_streak(session["student_id"])})
 
         flash("Thanks for checking in today!", "success")
         return redirect(url_for("checkin"))
@@ -321,6 +533,7 @@ def speakup():
             description=description,
             is_anonymous=is_anonymous,
             status="open",
+            student_id=None if is_anonymous else session["student_id"],
         )
         db.session.add(report)
         db.session.commit()
@@ -372,9 +585,9 @@ MAX_EMERGENCY_CONTACTS = 2
 @app.route("/helphub")
 @login_required
 def helphub():
-    contacts = models.EmergencyContact.query.order_by(
-        models.EmergencyContact.created_at
-    ).all()
+    contacts = models.EmergencyContact.query.filter_by(
+        student_id=session["student_id"]
+    ).order_by(models.EmergencyContact.created_at).all()
     return render_template(
         "helphub.html",
         contacts=contacts,
@@ -386,7 +599,9 @@ def helphub():
 @app.route("/helphub/contacts/add", methods=["GET", "POST"])
 @login_required
 def helphub_contact_add():
-    contact_count = models.EmergencyContact.query.count()
+    contact_count = models.EmergencyContact.query.filter_by(
+        student_id=session["student_id"]
+    ).count()
     if contact_count >= MAX_EMERGENCY_CONTACTS:
         flash("Maximum 2 contacts reached. Remove one to add another.", "error")
         return redirect(url_for("helphub"))
@@ -425,6 +640,7 @@ def helphub_contact_add():
             phone_number=phone_number,
             relationship=relationship,
             category=contact_category or None,
+            student_id=session["student_id"],
         )
         db.session.add(contact)
         db.session.commit()
@@ -444,7 +660,9 @@ def helphub_contact_add():
 @app.route("/helphub/contacts/<int:contact_id>/delete", methods=["POST"])
 @login_required
 def helphub_contact_delete(contact_id):
-    contact = db.session.get(models.EmergencyContact, contact_id)
+    contact = models.EmergencyContact.query.filter_by(
+        id=contact_id, student_id=session["student_id"]
+    ).first()
     if contact is not None:
         db.session.delete(contact)
         db.session.commit()
@@ -455,8 +673,9 @@ def helphub_contact_delete(contact_id):
 def _category_page(slug):
     contact = (
         models.EmergencyContact.query.filter(
+            models.EmergencyContact.student_id == session["student_id"],
             (models.EmergencyContact.category == slug)
-            | (models.EmergencyContact.category.is_(None))
+            | (models.EmergencyContact.category.is_(None)),
         )
         .order_by(models.EmergencyContact.created_at)
         .first()
@@ -526,7 +745,7 @@ def buddy_message():
 
     chat_session_id = session.get("chat_session_id")
     if not chat_session_id:
-        chat_session = models.ChatSession()
+        chat_session = models.ChatSession(student_id=session["student_id"])
         db.session.add(chat_session)
         db.session.commit()
         chat_session_id = chat_session.id
