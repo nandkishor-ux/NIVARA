@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}NIVARA - Buddy{% endblock %}
+
+{% block content %}
+<main class="chat-app">
+    <h1>Nivara Buddy</h1>
+    <p class="subtitle">A safe space to talk. I'm here for you.</p>
+
+    <div class="chat-card">
+        <div id="chat-messages" class="chat-messages" role="log" aria-live="polite">
+            <div class="chat-bubble chat-bubble-buddy">
+                Hey, I'm Nivara Buddy. Whatever's on your mind — stress, loneliness, or just
+                wanting to talk — I'm here. It's just us.
+            </div>
+        </div>
+
+        <div id="crisis-alert" class="crisis-alert" hidden>
+            <strong>You deserve immediate support.</strong>
+            <p>Please reach a real person right now — a warden, the counseling desk, or the
+            emergency line. You're not alone in this, and help is available.</p>
+            <p>Contact: <span class="crisis-contact">[Hostel Emergency Line — to be configured]</span></p>
+        </div>
+
+        <form id="chat-form" class="chat-form" autocomplete="off">
+            <input
+                id="chat-input"
+                type="text"
+                class="chat-input"
+                placeholder="Type a message…"
+                aria-label="Your message"
+                maxlength="500"
+                required
+            >
+            <button type="submit" class="chat-send">Send</button>
+        </form>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const messagesEl = document.getElementById("chat-messages");
+    const formEl = document.getElementById("chat-form");
+    const inputEl = document.getElementById("chat-input");
+    const alertEl = document.getElementById("crisis-alert");
+
+    function appendBubble(text, sender) {
+        const bubble = document.createElement("div");
+        bubble.className = "chat-bubble chat-bubble-" + sender;
+        bubble.textContent = text;
+        messagesEl.appendChild(bubble);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        return bubble;
+    }
+
+    function showCrisisAlert(reply) {
+        alertEl.hidden = false;
+        alertEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    formEl.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const text = inputEl.value.trim();
+        if (!text) return;
+
+        appendBubble(text, "student");
+        inputEl.value = "";
+        inputEl.disabled = true;
+
+        try {
+            const res = await fetch("{{ url_for('buddy_message') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: text }),
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                appendBubble(data.error || "Something went wrong. Try again.", "buddy");
+                return;
+            }
+
+            if (data.crisis) {
+                appendBubble(data.reply, "buddy");
+                showCrisisAlert(data.reply);
+            } else {
+                appendBubble(data.reply, "buddy");
+                alertEl.hidden = true;
+            }
+        } catch (err) {
+            appendBubble("Sorry, I couldn't reach the buddy service. Try again in a moment.", "buddy");
+        } finally {
+            inputEl.disabled = false;
+            inputEl.focus();
+        }
+    });
+</script>
+{% endblock %}

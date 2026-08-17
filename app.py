@@ -1,4 +1,7 @@
-from flask import Flask, flash, redirect, render_template, request, url_for
+import logging
+import traceback
+
+from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -9,6 +12,7 @@ app.secret_key = "nivara-dev"
 db = SQLAlchemy(app)
 
 import models  # noqa: E402,F401
+import chatbot  # noqa: E402,F401
 
 with app.app_context():
     db.create_all()
@@ -106,6 +110,60 @@ def helphub_emergency():
 @app.route("/helphub/general")
 def helphub_general():
     return _category_page("general")
+
+
+CRISIS_REPLY = (
+    "You're not alone in this — please reach a real person right now. "
+    "Contact: [Hostel Emergency Line — to be configured] or [Crisis Helpline — to be configured]. "
+    "Your safety matters most."
+)
+
+
+@app.route("/buddy")
+def buddy():
+    return render_template("buddy.html")
+
+
+@app.route("/buddy/message", methods=["POST"])
+def buddy_message():
+    data = request.get_json(silent=True) or {}
+    message = (data.get("message") or "").strip()
+
+    if not message:
+        return jsonify({"error": "Please type a message."}), 400
+
+    if chatbot.check_crisis_keywords(message):
+        return jsonify(
+            {
+                "reply": CRISIS_REPLY,
+                "mood_signal_flag": "high",
+                "crisis": True,
+            }
+        )
+
+    chat_session_id = session.get("chat_session_id")
+    if not chat_session_id:
+        chat_session = models.ChatSession()
+        db.session.add(chat_session)
+        db.session.commit()
+        chat_session_id = chat_session.id
+        session["chat_session_id"] = chat_session_id
+
+    try:
+        reply = chatbot.get_buddy_response(message)
+    except Exception as exc:
+        logging.error("Buddy service error:\n%s", traceback.format_exc())
+        return jsonify({"error": f"Buddy service error: {exc}"}), 502
+
+    db.session.add(
+        models.ChatMessage(chat_session_id=chat_session_id, sender="student", content=message)
+    )
+    db.session.add(
+        models.ChatMessage(chat_session_id=chat_session_id, sender="buddy", content=reply)
+    )
+    db.session.commit()
+
+    return jsonify({"reply": reply, "mood_signal_flag": "low", "crisis": False})
 
 
 if __name__ == "__main__":

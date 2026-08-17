@@ -301,3 +301,115 @@ select.field-control {
     align-items: center;
     gap: 1.2rem;
 }
+
+.chat-app {
+    width: 90%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chat-card {
+    width: 100%;
+    margin-top: 1.2rem;
+    background: #fff;
+    border-radius: 24px;
+    padding: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    height: 420px;
+    overflow-y: auto;
+    padding: 0.4rem 0 0.8rem;
+    text-align: left;
+}
+
+.chat-bubble {
+    max-width: 78%;
+    padding: 0.7rem 0.95rem;
+    border-radius: 16px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.chat-bubble-student {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-bubble-buddy {
+    align-self: flex-start;
+    background: #f0f2f5;
+    color: #333;
+    border-bottom-left-radius: 4px;
+}
+
+.crisis-alert {
+    margin: 0.4rem 0 0.8rem;
+    padding: 1rem 1.1rem;
+    border-radius: 16px;
+    background: #fff1f0;
+    border: 2px solid #ef4444;
+    color: #7f1d1d;
+    text-align: left;
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
+}
+
+.crisis-alert p {
+    margin: 0.4rem 0 0;
+}
+
+.crisis-contact {
+    font-weight: 700;
+}
+
+.chat-form {
+    display: flex;
+    gap: 0.6rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid #eef0f3;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e6ea;
+    border-radius: 14px;
+    background: #fafbfc;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.chat-input:focus {
+    outline: none;
+    border-color: #f59e0b;
+    background: #fff;
+}
+
+.chat-send {
+    padding: 0.75rem 1.3rem;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.12s ease;
+}
+
+.chat-send:hover {
+    opacity: 0.92;
+}
