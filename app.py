@@ -111,9 +111,70 @@ HELP_CATEGORIES = {
 }
 
 
+MAX_EMERGENCY_CONTACTS = 2
+
+
 @app.route("/helphub")
 def helphub():
-    return render_template("helphub.html")
+    contacts = models.EmergencyContact.query.order_by(
+        models.EmergencyContact.created_at
+    ).all()
+    return render_template(
+        "helphub.html",
+        contacts=contacts,
+        max_contacts=MAX_EMERGENCY_CONTACTS,
+    )
+
+
+@app.route("/helphub/contacts/add", methods=["GET", "POST"])
+def helphub_contact_add():
+    contact_count = models.EmergencyContact.query.count()
+    if contact_count >= MAX_EMERGENCY_CONTACTS:
+        flash("Maximum 2 contacts reached. Remove one to add another.", "error")
+        return redirect(url_for("helphub"))
+
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        phone_number = request.form.get("phone_number", "").strip()
+        relationship = request.form.get("relationship", "").strip() or None
+
+        error = None
+        if not name:
+            error = "Please enter the contact's name."
+        elif not phone_number:
+            error = "Please enter a phone number."
+
+        if error:
+            return render_template(
+                "helphub_contact_form.html",
+                error=error,
+                name=name,
+                phone_number=phone_number,
+                relationship=relationship,
+            ), 400
+
+        contact = models.EmergencyContact(
+            name=name,
+            phone_number=phone_number,
+            relationship=relationship,
+        )
+        db.session.add(contact)
+        db.session.commit()
+
+        flash("Contact saved.", "success")
+        return redirect(url_for("helphub"))
+
+    return render_template("helphub_contact_form.html")
+
+
+@app.route("/helphub/contacts/<int:contact_id>/delete", methods=["POST"])
+def helphub_contact_delete(contact_id):
+    contact = db.session.get(models.EmergencyContact, contact_id)
+    if contact is not None:
+        db.session.delete(contact)
+        db.session.commit()
+        flash("Contact removed.", "success")
+    return redirect(url_for("helphub"))
 
 
 def _category_page(slug):

@@ -60,3 +60,14 @@ class ChatMessage(db.Model):
     sender = db.Column(db.String, nullable=False)
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=utcnow)
+
+
+class EmergencyContact(db.Model):
+    __tablename__ = "emergency_contacts"
+
+    id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.id"), nullable=True)
+    name = db.Column(db.String, nullable=False)
+    phone_number = db.Column(db.String, nullable=False)
+    relationship = db.Column(db.String, nullable=True)
+    created_at = db.Column(db.DateTime, default=utcnow)

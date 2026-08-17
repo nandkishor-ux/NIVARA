@@ -24,5 +24,47 @@
             <span class="help-tile-hint">Anything else</span>
         </a>
     </nav>
+
+    <section class="contacts-section">
+        <h2 class="contacts-title">My Emergency Contacts</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p class="flash flash-{{ category }}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if not contacts %}
+            <p class="contacts-empty">Add someone we can reach in an emergency</p>
+            <a href="{{ url_for('helphub_contact_add') }}" class="btn-secondary">+ Add Contact</a>
+        {% else %}
+            <div class="contacts-list">
+                {% for contact in contacts %}
+                <div class="contact-card">
+                    <div class="contact-info">
+                        <span class="contact-name">{{ contact.name }}</span>
+                        {% if contact.relationship %}
+                            <span class="contact-relationship">{{ contact.relationship }}</span>
+                        {% endif %}
+                        <a class="contact-phone" href="tel:{{ contact.phone_number }}">
+                            📞 {{ contact.phone_number }}
+                        </a>
+                    </div>
+                    <form method="post" action="{{ url_for('helphub_contact_delete', contact_id=contact.id) }}">
+                        <button type="submit" class="contact-remove">Remove</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if contacts|length < max_contacts %}
+                <a href="{{ url_for('helphub_contact_add') }}" class="btn-secondary">+ Add Another</a>
+            {% else %}
+                <p class="contacts-limit">Maximum 2 contacts reached</p>
+            {% endif %}
+        {% endif %}
+    </section>
 </main>
 {% endblock %}

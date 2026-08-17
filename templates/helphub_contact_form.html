@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}NIVARA - Add Emergency Contact{% endblock %}
+
+{% block content %}
+<main class="contact-form-card">
+    <h1>Add Emergency Contact</h1>
+    <p class="subtitle">Someone we can reach for you in an emergency</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p class="flash flash-{{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if error %}
+        <p class="flash flash-error">{{ error }}</p>
+    {% endif %}
+
+    <form method="post" class="checkin-form">
+        <label class="field">
+            <span class="field-label">Name</span>
+            <input type="text" name="name" class="field-control" placeholder="e.g. Mom, Rohan" required value="{{ name or '' }}">
+        </label>
+
+        <label class="field">
+            <span class="field-label">Phone Number</span>
+            <input type="tel" name="phone_number" class="field-control" placeholder="e.g. +91 98765 43210"
+                   required value="{{ phone_number or '' }}">
+        </label>
+
+        <label class="field">
+            <span class="field-label">Relationship</span>
+            <input type="text" name="relationship" class="field-control" placeholder="e.g. Parent, Guardian, Friend"
+                   value="{{ relationship or '' }}">
+        </label>
+
+        <button type="submit" class="btn-primary">Save Contact</button>
+        <a href="{{ url_for('helphub') }}" class="btn-secondary">Cancel</a>
+    </form>
+</main>
+{% endblock %}
