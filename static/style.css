@@ -234,6 +234,8 @@ select.field-control {
     flex-direction: column;
     align-items: center;
     gap: 1rem;
+    border-left: 4px solid #ef4444;
+    border-left-style: solid;
 }
 
 .contacts-title {
@@ -241,6 +243,14 @@ select.field-control {
     font-size: 1.2rem;
     font-weight: 700;
     color: #333;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.contacts-warning {
+    color: #ef4444;
+    flex-shrink: 0;
 }
 
 .contacts-empty {
@@ -559,6 +569,46 @@ select.field-control {
     padding-bottom: 2.5rem;
 }
 
+.home-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.home-logo {
+    color: #f59e0b;
+    flex-shrink: 0;
+}
+
+.pillars {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    list-style: none;
+    margin: 0.6rem 0 0;
+    padding: 0;
+}
+
+.pillar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+}
+
+.pillar-icon {
+    font-size: 1.3rem;
+    line-height: 1;
+}
+
+.pillar-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #999;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
 .quick-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -580,12 +630,18 @@ select.field-control {
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
     border: 1px solid #f0f1f4;
     text-align: left;
-    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .quick-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.09);
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+}
+
+.quick-card:active {
+    transform: translateY(-4px) scale(0.97);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+    transition: transform 0.08s ease;
 }
 
 .quick-emoji {
@@ -605,19 +661,19 @@ select.field-control {
 }
 
 .quick-card-checkin {
-    background: linear-gradient(135deg, #fff8ec, #fff3dd);
+    background: linear-gradient(135deg, #d8f3ee, #b9e6dd);
 }
 
 .quick-card-speakup {
-    background: linear-gradient(135deg, #eef4ff, #e3edff);
+    background: linear-gradient(135deg, #ffe9c7, #ffd19a);
 }
 
 .quick-card-helphub {
-    background: linear-gradient(135deg, #fff0ee, #ffe2dd);
+    background: linear-gradient(135deg, #ffd9d6, #ffb3ad);
 }
 
 .quick-card-buddy {
-    background: linear-gradient(135deg, #f4efff, #e9e0ff);
+    background: linear-gradient(135deg, #e9dcf7, #d5bdf0);
 }
 
 .streak {
@@ -696,6 +752,35 @@ select.field-control {
 
 .mood-confirm.fade-out {
     opacity: 0;
+}
+
+.mood-row {
+    transition: background 0.5s ease, border-color 0.5s ease;
+}
+
+.mood-row.mood-tint-1 {
+    background: #fff1f0;
+    border-color: #fca5a5;
+}
+
+.mood-row.mood-tint-2 {
+    background: #fff7ed;
+    border-color: #fdba74;
+}
+
+.mood-row.mood-tint-3 {
+    background: #fefce8;
+    border-color: #fde047;
+}
+
+.mood-row.mood-tint-4 {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+.mood-row.mood-tint-5 {
+    background: #ecfdf5;
+    border-color: #6ee7b7;
 }
 
 .chat-fab {

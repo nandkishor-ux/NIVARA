@@ -4,8 +4,31 @@
 
 {% block content %}
 <main class="home">
-    <h1>NIVARA - Hostel Health, Safety &amp; Wellness</h1>
+    <h1 class="home-title">
+        <svg class="home-logo" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2l7 3v5c0 5-3.2 8.9-7 10-3.8-1.1-7-5-7-10V5l7-3z"></path>
+            <path d="M12 8v6"></path>
+            <path d="M9 11h6"></path>
+        </svg>
+        NIVARA - Hostel Health, Safety &amp; Wellness
+    </h1>
     <p class="subtitle">Your connected space for support</p>
+
+    <ul class="pillars">
+        <li class="pillar">
+            <span class="pillar-icon" aria-hidden="true">🏠</span>
+            <span class="pillar-label">Community</span>
+        </li>
+        <li class="pillar">
+            <span class="pillar-icon" aria-hidden="true">🛡️</span>
+            <span class="pillar-label">Safety</span>
+        </li>
+        <li class="pillar">
+            <span class="pillar-icon" aria-hidden="true">💚</span>
+            <span class="pillar-label">Wellness</span>
+        </li>
+    </ul>
 
     {% if streak > 0 %}
         <p class="streak">🔥 {{ streak }}-day check-in streak</p>
@@ -59,6 +82,12 @@
 <script>
     const confirmEl = document.getElementById("mood-confirm");
     const streakEl = document.querySelector(".streak");
+    const moodRowEl = document.querySelector(".mood-row");
+    const moodTints = ["mood-tint-1", "mood-tint-2", "mood-tint-3", "mood-tint-4", "mood-tint-5"];
+
+    function clearMoodTint() {
+        moodRowEl.classList.remove(...moodTints);
+    }
 
     async function logMood(value) {
         try {
@@ -75,6 +104,9 @@
                     ? "🔥 " + data.streak + "-day check-in streak"
                     : "Start your check-in streak today";
             }
+
+            clearMoodTint();
+            moodRowEl.classList.add("mood-tint-" + value);
 
             confirmEl.hidden = false;
             confirmEl.classList.remove("fade-out");
