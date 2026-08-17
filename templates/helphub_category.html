@@ -7,6 +7,34 @@
     <h1>{{ category.title }}</h1>
     <p class="subtitle">Contact: [{{ category.contact }} — to be configured]</p>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p class="flash flash-{{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <section class="hostel-contact-section">
+        <h2 class="hostel-contact-title">Your Hostel Contact</h2>
+
+        {% if contact %}
+            <a class="hostel-contact-card" href="tel:{{ contact.phone_number }}">
+                <span class="hostel-contact-icon">📞</span>
+                <span class="hostel-contact-text">
+                    <span class="hostel-contact-label">Call {{ contact.name }}</span>
+                    {% if contact.relationship %}
+                        <span class="hostel-contact-relationship">{{ contact.relationship }}</span>
+                    {% endif %}
+                    <span class="hostel-contact-number">{{ contact.phone_number }}</span>
+                </span>
+            </a>
+        {% else %}
+            <p class="hostel-contact-empty">Add your hostel warden or medical desk contact for quick access</p>
+            <a href="{{ url_for('helphub_contact_add', category=slug) }}" class="btn-secondary">+ Add Contact</a>
+        {% endif %}
+    </section>
+
     {% if category.numbers %}
     <section class="call-section">
         <h2 class="call-section-title">Call a helpline now</h2>

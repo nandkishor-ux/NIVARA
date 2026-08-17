@@ -70,4 +70,5 @@ class EmergencyContact(db.Model):
     name = db.Column(db.String, nullable=False)
     phone_number = db.Column(db.String, nullable=False)
     relationship = db.Column(db.String, nullable=True)
+    category = db.Column(db.String, nullable=True)
     created_at = db.Column(db.DateTime, default=utcnow)

@@ -150,6 +150,7 @@ def helphub():
         "helphub.html",
         contacts=contacts,
         max_contacts=MAX_EMERGENCY_CONTACTS,
+        HELP_CATEGORIES=HELP_CATEGORIES,
     )
 
 
@@ -160,10 +161,17 @@ def helphub_contact_add():
         flash("Maximum 2 contacts reached. Remove one to add another.", "error")
         return redirect(url_for("helphub"))
 
+    contact_category = request.args.get("category", "").strip()
+    if contact_category not in HELP_CATEGORIES:
+        contact_category = ""
+
     if request.method == "POST":
         name = request.form.get("name", "").strip()
         phone_number = request.form.get("phone_number", "").strip()
         relationship = request.form.get("relationship", "").strip() or None
+        contact_category = request.form.get("category", "").strip()
+        if contact_category not in HELP_CATEGORIES:
+            contact_category = ""
 
         error = None
         if not name:
@@ -178,20 +186,29 @@ def helphub_contact_add():
                 name=name,
                 phone_number=phone_number,
                 relationship=relationship,
+                category=contact_category,
+                HELP_CATEGORIES=HELP_CATEGORIES,
             ), 400
 
         contact = models.EmergencyContact(
             name=name,
             phone_number=phone_number,
             relationship=relationship,
+            category=contact_category or None,
         )
         db.session.add(contact)
         db.session.commit()
 
         flash("Contact saved.", "success")
+        if contact_category:
+            return redirect(url_for("helphub_" + contact_category))
         return redirect(url_for("helphub"))
 
-    return render_template("helphub_contact_form.html")
+    return render_template(
+        "helphub_contact_form.html",
+        category=contact_category,
+        HELP_CATEGORIES=HELP_CATEGORIES,
+    )
 
 
 @app.route("/helphub/contacts/<int:contact_id>/delete", methods=["POST"])
@@ -205,7 +222,20 @@ def helphub_contact_delete(contact_id):
 
 
 def _category_page(slug):
-    return render_template("helphub_category.html", category=HELP_CATEGORIES[slug])
+    contact = (
+        models.EmergencyContact.query.filter(
+            (models.EmergencyContact.category == slug)
+            | (models.EmergencyContact.category.is_(None))
+        )
+        .order_by(models.EmergencyContact.created_at)
+        .first()
+    )
+    return render_template(
+        "helphub_category.html",
+        category=HELP_CATEGORIES[slug],
+        slug=slug,
+        contact=contact,
+    )
 
 
 @app.route("/helphub/medical")

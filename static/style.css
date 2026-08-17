@@ -337,6 +337,103 @@ select.field-control {
     opacity: 0.9;
 }
 
+.contact-tag {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 8px;
+    background: #eef0f3;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 700;
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+}
+
+.contact-tag-all {
+    background: #fff8ec;
+    color: #b45309;
+}
+
+.hostel-contact-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.hostel-contact-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.hostel-contact-empty {
+    margin: 0;
+    color: #777;
+    font-size: 0.95rem;
+}
+
+.hostel-contact-card {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.9rem 1.1rem;
+    background: linear-gradient(135deg, #14b8a6, #0d9488);
+    border-radius: 16px;
+    text-decoration: none;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.hostel-contact-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(20, 184, 166, 0.4);
+}
+
+.hostel-contact-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.hostel-contact-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.05rem;
+}
+
+.hostel-contact-label {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.hostel-contact-relationship {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+.hostel-contact-number {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.contact-category-note {
+    margin: 0;
+    padding: 0.6rem 1rem;
+    background: #eef4ff;
+    color: #2563eb;
+    border-radius: 12px;
+    font-size: 0.9rem;
+}
+
 .contact-remove {
     border: none;
     background: none;

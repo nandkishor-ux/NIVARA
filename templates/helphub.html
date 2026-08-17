@@ -53,7 +53,15 @@
                 {% for contact in contacts %}
                 <div class="contact-card">
                     <div class="contact-info">
-                        <span class="contact-name">{{ contact.name }}</span>
+                        <span class="contact-name">{{ contact.name }}
+                            {% if contact.category and contact.category in HELP_CATEGORIES %}
+                                <span class="contact-tag">{{ HELP_CATEGORIES[contact.category].title }}</span>
+                            {% elif contact.category %}
+                                <span class="contact-tag">{{ contact.category }}</span>
+                            {% else %}
+                                <span class="contact-tag contact-tag-all">All pages</span>
+                            {% endif %}
+                        </span>
                         {% if contact.relationship %}
                             <span class="contact-relationship">{{ contact.relationship }}</span>
                         {% endif %}
