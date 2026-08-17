@@ -127,6 +127,10 @@ def send_otp_email(student, otp):
         logging.info("OTP email sent to %s", student.email)
         return True
     except Exception:
+        print("=" * 60)
+        print("EMAIL SEND FAILED - FULL TRACEBACK:")
+        print(traceback.format_exc())
+        print("=" * 60)
         logging.error("Failed to send OTP email to %s:\n%s", student.email, traceback.format_exc())
         return False
 
